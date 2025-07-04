@@ -6,15 +6,19 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ContactsRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
+    public function authorize()
     {
+        return true; // autoriza a requisição
+    }
+
+    public function rules()
+    {
+        $contactId = $this->route('contact')?->id ?? null;
+
         return [
-            //
+            'name' => 'required|string|min:3',
+            'email' => 'required|email|unique:contacts,email,' . $contactId,
+            'phone' => 'required|string|min:10',
         ];
     }
 }
