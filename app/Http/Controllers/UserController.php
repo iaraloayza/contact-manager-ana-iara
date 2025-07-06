@@ -115,17 +115,49 @@ class UserController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
+        try {
+            $credentials = $request->only('email', 'password');
+            $errors = [];
 
-        if (!Auth::attempt($credentials)) {
+            // Verificar se o usuário existe
+            $user = User::where('email', $credentials['email'])->first();
+            
+            if (!$user) {
+                $errors['email'] = 'Este email não está cadastrado em nosso sistema.';
+            } else {
+                // Verificar se a senha está correta
+                if (!Hash::check($credentials['password'], $user->password)) {
+                    $errors['password'] = 'A senha está incorreta.';
+                }
+            }
+
+            // Se há erros, retornar com as mensagens específicas
+            if (!empty($errors)) {
+                return redirect()->back()
+                    ->withErrors($errors)
+                    ->withInput($request->only('email'));
+            }
+
+            // Se chegou até aqui, as credenciais estão corretas
+            // Fazer login
+            Auth::login($user);
+
+            // Regenerar ID da sessão para segurança
+            $request->session()->regenerate();
+
+            // Login bem-sucedido
+            return redirect()->route('contacts.index')
+                ->with('success', 'Login realizado com sucesso!');
+                
+        } catch (\Exception $e) {
+            \Log::error('Erro no login: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            \Log::error('Email tentativa: ' . $request->email);
+            
             return redirect()->back()
-                ->with('error', 'Credenciais inválidas.')
-                ->withInput();
+                ->withErrors(['email' => 'Erro interno do sistema. Tente novamente em alguns instantes.'])
+                ->withInput($request->only('email'));
         }
-
-        // Login
-        return redirect()->route('contacts.index')
-            ->with('success', 'Login realizado com sucesso!');
     }
 
     public function verifyTwoFactor(TwoFactorRequest $request)
