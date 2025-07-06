@@ -10,6 +10,15 @@ use Tests\TestCase;
 class CreateContactsTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = \App\Models\User::factory()->create();
+        $this->actingAs($this->user);
+    }
+
     
     #[Test]
     public function it_should_be_able_to_create_a_new_contact(): void
