@@ -7,7 +7,7 @@ use App\Models\Contact;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class CreateContactController extends Controller
+class ContactController extends Controller
 {
     public function index()
     {
