@@ -117,6 +117,12 @@
             </div>
           </div>
 
+          <p class="text-right mt-2">
+            <Link href="/forgot-password" class="text-sm text-cyan-300 hover:underline">
+              Esqueci minha senha
+            </Link>
+          </p>
+
           <div>
             <button
               type="submit"

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ForgotPasswordController;
 
 // Rotas de autenticação (sem middleware auth)
 Route::middleware('guest')->group(function () {
@@ -16,6 +17,12 @@ Route::middleware('guest')->group(function () {
     Route::get('/2fa', [UserController::class, 'show2FA'])->name('2fa.show');
     Route::post('/2fa/verify', [UserController::class, 'verifyTwoFactor'])->name('2fa.verify');
     Route::post('/2fa/resend', [UserController::class, 'resendCode'])->name('2fa.resend');
+
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+    Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
 // Rotas protegidas (com middleware auth)
