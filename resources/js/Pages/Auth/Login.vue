@@ -143,7 +143,7 @@
       <!-- Footer -->
       <div class="text-center">
         <p class="text-gray-400 text-sm">
-          © 2024 Contact Manager. Gerencie seus contatos com estilo.
+          © 2025 Contact Manager. Gerencie seus contatos com estilo.
         </p>
       </div>
     </div>

@@ -27,6 +27,22 @@
           </div>
           
           <div class="flex items-center space-x-4">
+            <!-- Notifications Button -->
+            <Link
+              href="/notifications"
+              class="relative flex items-center space-x-2 text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-xl p-3 bg-white/60 backdrop-blur-sm border border-slate-200/50 transition-all duration-200 cursor-pointer hover:bg-white/80"
+            >
+              <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5" />
+                </svg>
+                <span v-if="unreadCount > 0" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {{ unreadCount > 9 ? '9+' : unreadCount }}
+                </span>
+              </div>
+              <span class="font-medium hidden sm:inline">Notificações</span>
+            </Link>
+
             <div class="relative z-50" ref="userMenuRef">
               <button
                 @click="toggleUserMenu"
@@ -258,7 +274,7 @@
       <!-- Footer -->
       <div class="text-center mt-8">
         <p class="text-slate-500 text-sm">
-          © 2024 Contact Manager. Gerencie seus contatos com estilo.
+          © 2025 Contact Manager. Gerencie seus contatos com estilo.
         </p>
       </div>
     </div>
@@ -291,7 +307,11 @@ import ConfirmModal from './ConfirmModal.vue'
 
 const props = defineProps({
   contacts: Object,
-  success: String
+  success: String,
+  unreadCount: {
+    type: Number,
+    default: 0
+  }
 })
 
 const showModal = ref(false)

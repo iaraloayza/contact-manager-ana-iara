@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\NotificationController;
 
 // Rotas de autenticação (sem middleware auth)
 Route::middleware('guest')->group(function () {
@@ -27,6 +28,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/contacts', [ContactController::class, 'store'])->name('contacts.store');
     Route::put('/contacts/{contact}', [ContactController::class, 'update'])->name('contacts.update');
     Route::delete('/contacts/{contact}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+
+    // Rotas de notificações
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::patch('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
+
+    // Rota para limpar todas as notificações
+    Route::delete('/clear-notifications', function () {
+        $user = auth()->user();
+        $user->notifications()->delete();
+        
+        return redirect()->route('notifications.index')
+            ->with('success', 'Todas as notificações foram removidas!');
+    })->name('clear.notifications');
 });
 
 // Redirecionar para login se não autenticado
