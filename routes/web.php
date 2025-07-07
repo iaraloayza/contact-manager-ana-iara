@@ -21,6 +21,10 @@ Route::middleware('guest')->group(function () {
 // Rotas protegidas (com middleware auth)
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+
+    Route::get('/profile', [UserController::class, 'showProfile'])->name('profile.show');
+    Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
     
     // Rotas dos contatos
     Route::get('/', [ContactController::class, 'index'])->name('contacts.index');
