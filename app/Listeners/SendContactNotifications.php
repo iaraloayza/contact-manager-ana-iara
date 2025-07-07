@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\ContactCreated;
 use App\Events\ContactUpdated;
 use App\Events\ContactDeleted;
+use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -26,34 +27,26 @@ class SendContactNotifications implements ShouldQueue
             \Log::info('Processando evento ContactCreated', [
                 'contact_id' => $event->contact->id,
                 'contact_name' => $event->contact->name,
-                'created_by' => $event->contact->created_by ?? 'null'
+                'action_by' => $event->actionBy->name
             ]);
 
-            // Usar o relacionamento createdBy em vez de user
-            $user = $event->contact->createdBy;
-            
-            if (!$user) {
-                \Log::warning('Usuário não encontrado para notificação', [
-                    'contact_id' => $event->contact->id,
-                    'created_by' => $event->contact->created_by
-                ]);
-                return;
-            }
-
-            $this->notificationService->create(
-                user: $user,
+            // Notificar TODOS os usuários do sistema
+            $this->notifyAllUsers(
                 type: 'contact_created',
-                title: '✅ Contato criado',
+                title: '✅ Novo contato criado',
                 message: "O contato '{$event->contact->name}' foi criado com sucesso!",
                 data: [
                     'contact_id' => $event->contact->id,
                     'contact_name' => $event->contact->name,
                     'contact_email' => $event->contact->email,
+                    'action_by' => $event->actionBy->name,
+                    'action_by_id' => $event->actionBy->id,
                     'action_url' => route('contacts.index')
-                ]
+                ],
+                excludeUser: $event->actionBy->id // Opcional: excluir o usuário que fez a ação
             );
 
-            \Log::info('Notificação de contato criado enviada com sucesso');
+            \Log::info('Notificações de contato criado enviadas para todos os usuários');
         } catch (\Exception $e) {
             \Log::error('Erro ao processar evento ContactCreated', [
                 'error' => $e->getMessage(),
@@ -62,38 +55,36 @@ class SendContactNotifications implements ShouldQueue
         }
     }
 
+    /**
+     * Handle the ContactUpdated event.
+     */
     public function handleContactUpdated(ContactUpdated $event): void
     {
         try {
             \Log::info('Processando evento ContactUpdated', [
                 'contact_id' => $event->contact->id,
                 'contact_name' => $event->contact->name,
-                'updated_by' => $event->contact->updated_by ?? 'null'
+                'action_by' => $event->actionBy->name
             ]);
 
-            $user = $event->contact->createdBy ?? auth()->user();
-
-            if (!$user) {
-                \Log::warning('Usuário não encontrado para notificação de atualização', [
-                    'contact_id' => $event->contact->id
-                ]);
-                return;
-            }
-
-            $this->notificationService->create(
-                user: $user,
+            // Notificar TODOS os usuários do sistema
+            $this->notifyAllUsers(
                 type: 'contact_updated',
                 title: '✏️ Contato atualizado',
-                message: "O contato '{$event->contact->name}' foi atualizado com sucesso.",
+                message: "O contato '{$event->contact->name}' foi atualizado com sucesso!",
                 data: [
                     'contact_id' => $event->contact->id,
                     'contact_name' => $event->contact->name,
+                    'contact_email' => $event->contact->email,
                     'updated_at' => now()->toISOString(),
+                    'action_by' => $event->actionBy->name,
+                    'action_by_id' => $event->actionBy->id,
                     'action_url' => route('contacts.index')
-                ]
+                ],
+                excludeUser: $event->actionBy->id // Opcional: excluir o usuário que fez a ação
             );
 
-            \Log::info('Notificação de contato atualizado enviada com sucesso');
+            \Log::info('Notificações de contato atualizado enviadas para todos os usuários');
         } catch (\Exception $e) {
             \Log::error('Erro ao processar evento ContactUpdated', [
                 'error' => $e->getMessage(),
@@ -110,29 +101,25 @@ class SendContactNotifications implements ShouldQueue
         try {
             \Log::info('Processando evento ContactDeleted', [
                 'contact_name' => $event->contactName,
-                'user_id' => $event->user->id ?? 'null'
+                'action_by' => $event->actionBy->name
             ]);
 
-            if (!$event->user) {
-                \Log::warning('Usuário não encontrado para notificação de exclusão', [
-                    'contact_name' => $event->contactName
-                ]);
-                return;
-            }
-
-            $this->notificationService->create(
-                user: $event->user,
+            // Notificar TODOS os usuários do sistema
+            $this->notifyAllUsers(
                 type: 'contact_deleted',
                 title: '🗑️ Contato removido',
-                message: "O contato '{$event->contactName}' foi removido do sistema.",
+                message: "O contato '{$event->contactName}' foi removido com sucesso!",
                 data: [
                     'contact_name' => $event->contactName,
                     'contact_data' => $event->contactData,
-                    'deleted_at' => now()->toISOString()
-                ]
+                    'deleted_at' => now()->toISOString(),
+                    'action_by' => $event->actionBy->name,
+                    'action_by_id' => $event->actionBy->id
+                ],
+                excludeUser: $event->actionBy->id // Opcional: excluir o usuário que fez a ação
             );
 
-            \Log::info('Notificação de contato deletado enviada com sucesso');
+            \Log::info('Notificações de contato deletado enviadas para todos os usuários');
         } catch (\Exception $e) {
             \Log::error('Erro ao processar evento ContactDeleted', [
                 'error' => $e->getMessage(),
@@ -142,9 +129,49 @@ class SendContactNotifications implements ShouldQueue
     }
 
     /**
+     * Notifica todos os usuários do sistema
+     */
+    private function notifyAllUsers(string $type, string $title, string $message, array $data = [], ?int $excludeUser = null): void
+    {
+        try {
+            // Buscar todos os usuários do sistema
+            $usersQuery = User::query();
+
+            $excludeUser = null;
+            
+            // Opcional: excluir o usuário que fez a ação para não notificar ele mesmo
+            // if ($excludeUser) {
+            //     $usersQuery->where('id', '!=', $excludeUser);
+            // }
+            
+            $users = $usersQuery->get();
+
+            foreach ($users as $user) {
+                $this->notificationService->create(
+                    user: $user,
+                    type: $type,
+                    title: $title,
+                    message: $message,
+                    data: $data
+                );
+            }
+
+            \Log::info("Notificações enviadas para {$users->count()} usuários", [
+                'type' => $type,
+                'excluded_user' => $excludeUser
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Erro ao notificar todos os usuários', [
+                'error' => $e->getMessage(),
+                'type' => $type
+            ]);
+        }
+    }
+
+    /**
      * Handle a job failure.
      */
-    public function failed(ContactCreated|ContactDeleted $event, \Throwable $exception): void
+    public function failed(ContactCreated|ContactUpdated|ContactDeleted $event, \Throwable $exception): void
     {
         \Log::error('Falha no processamento do evento de contato', [
             'event' => get_class($event),

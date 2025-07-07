@@ -52,8 +52,8 @@ class CustomNotification extends Notification implements ShouldQueue
             'type' => $this->type,
             'title' => $this->title,
             'message' => $this->message,
-            'data' => $this->data,
             'created_at' => now()->toISOString(),
+            ...$this->data, // ← Isso vai "desempacotar" os dados adicionais diretamente no array
         ];
     }
 

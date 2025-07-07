@@ -70,6 +70,31 @@ class NotificationService
     }
 
     /**
+     * Marca uma notificação como não lida
+     */
+    public function markAsUnread(User $user, string $notificationId): bool
+    {
+        try {
+            $notification = $user->notifications()->find($notificationId);
+            
+            if ($notification) {
+                $notification->update(['read_at' => null]);
+                return true;
+            }
+            
+            return false;
+        } catch (\Exception $e) {
+            \Log::error('Erro ao marcar notificação como não lida', [
+                'user_id' => $user->id,
+                'notification_id' => $notificationId,
+                'error' => $e->getMessage()
+            ]);
+            
+            return false;
+        }
+    }
+
+    /**
      * Marca todas as notificações do usuário como lidas
      */
     public function markAllAsRead(User $user): bool

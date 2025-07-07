@@ -32,10 +32,13 @@ class ContactController extends Controller
 
             $contact = Contact::create($data);
 
-            // Disparar evento para notificação
-            event(new ContactCreated($contact));
+            // Disparar evento passando o usuário que fez a ação
+            event(new ContactCreated($contact, Auth::user()));
 
-            \Log::info('Disparando evento ContactCreated', ['contact_id' => $contact->id]);
+            \Log::info('Disparando evento ContactCreated', [
+                'contact_id' => $contact->id,
+                'action_by' => Auth::user()->name
+            ]);
 
             return redirect()->back()->with('success', 'Contato criado com sucesso!');
         } catch (\Exception $e) {
@@ -52,8 +55,13 @@ class ContactController extends Controller
 
             $contact->update($data);
 
-            // Evento de atualização
-            event(new ContactUpdated($contact));
+            // Disparar evento passando o usuário que fez a ação
+            event(new ContactUpdated($contact, Auth::user()));
+
+            \Log::info('Disparando evento ContactUpdated', [
+                'contact_id' => $contact->id,
+                'action_by' => Auth::user()->name
+            ]);
 
             return redirect()->back()->with('success', 'Contato atualizado com sucesso!');
         } catch (\Exception $e) {
@@ -67,13 +75,18 @@ class ContactController extends Controller
             $contactName = $contact->name;
             $contactData = $contact->toArray();
             
-            // Usar o usuário que criou o contato ou o usuário atual
-            $user = $contact->createdBy ?? Auth::user();
+            // Capturar o usuário que está fazendo a ação ANTES de deletar
+            $actionBy = Auth::user();
 
             $contact->delete();
 
-            // Disparar evento para notificação
-            event(new ContactDeleted($user, $contactName, $contactData));
+            // Disparar evento passando o usuário que fez a ação
+            event(new ContactDeleted($actionBy, $contactName, $contactData));
+
+            \Log::info('Disparando evento ContactDeleted', [
+                'contact_name' => $contactName,
+                'action_by' => $actionBy->name
+            ]);
 
             return redirect()->back()->with('success', 'Contato excluído com sucesso!');
         } catch (\Exception $e) {
