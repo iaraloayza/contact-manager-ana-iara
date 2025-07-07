@@ -176,9 +176,71 @@
             </div>
           </form>
         </div>
+
+        <!-- Delete Account Section -->
+        <div class="mt-12 bg-white/70 backdrop-blur-xl shadow-xl rounded-2xl overflow-hidden border border-red-200">
+          <div class="px-8 py-6 border-b border-red-200 bg-red-100/40">
+            <h3 class="text-xl font-bold text-red-700">Excluir Conta</h3>
+            <p class="text-red-600 mt-1">Esta ação é irreversível. Todos os seus dados serão permanentemente apagados.</p>
+          </div>
+
+          <div class="p-8 flex justify-end">
+            <button
+              @click="showDeleteModal = true"
+              class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Excluir Conta
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div
+    v-if="showDeleteModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+      <h2 class="text-xl font-bold text-red-700 mb-4">Confirmar Exclusão</h2>
+      <p class="text-slate-700 mb-6">Tem certeza de que deseja excluir sua conta? Esta ação não poderá ser desfeita.</p>
+      
+      <form @submit.prevent="deleteAccount">
+        <div class="space-y-4">
+          <input
+            v-model="deleteForm.password"
+            type="password"
+            class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+            placeholder="Digite sua senha para confirmar"
+            required
+          />
+          <div v-if="$page.props.errors.delete_current_password" class="text-red-600 text-sm">
+            {{ $page.props.errors.delete_current_password }}
+          </div>
+        </div>
+
+        <div class="flex justify-end mt-6 space-x-4">
+          <button
+            type="button"
+            @click="showDeleteModal = false"
+            class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-slate-800 font-semibold"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            :disabled="deleteForm.processing"
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold disabled:opacity-50"
+          >
+            {{ deleteForm.processing ? 'Excluindo...' : 'Confirmar Exclusão' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </template>
 
 <script setup>
@@ -233,6 +295,30 @@ const updatePassword = () => {
     },
     onFinish: () => {
       passwordForm.processing = false
+    }
+  })
+}
+
+const showDeleteModal = ref(false)
+
+const deleteForm = reactive({
+  password: '',
+  processing: false
+})
+
+const deleteAccount = () => {
+  deleteForm.processing = true
+
+  router.delete('/profile', {
+    data: {
+      password: deleteForm.password
+    },
+    onFinish: () => {
+      deleteForm.processing = false
+      deleteForm.password = ''
+    },
+    onError: () => {
+      showDeleteModal.value = true // Reabrir modal se erro
     }
   })
 }

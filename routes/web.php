@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'showProfile'])->name('profile.show');
     Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
+    Route::delete('/profile', [UserController::class, 'destroy'])->name('profile.destroy');
     
     // Rotas dos contatos
     Route::get('/', [ContactController::class, 'index'])->name('contacts.index');

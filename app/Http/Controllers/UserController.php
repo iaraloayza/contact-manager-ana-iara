@@ -347,4 +347,26 @@ class UserController extends Controller
                 ->with('error', 'Erro ao atualizar senha. Tente novamente.');
         }
     }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'password' => ['required'],
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['delete_current_password' => 'Senha incorreta.']);
+        }
+
+        Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Conta excluída com sucesso.');
+    }
 }
