@@ -12,10 +12,12 @@ O Contact Manager é uma aplicação web moderna que permite às empresas gerenc
 - **Cadastro de usuários** com confirmação via email
 - **Recuperação de senha** via email
 - **Logout** com limpeza de sessão
+- **Edição de perfil** com atualização de dados do usuário
+- **Exclusão de conta** com verificação de senha e remoção segura da conta
 
 ### 👥 Gerenciamento de Contatos
 - **Listagem completa** de todos os contatos da empresa
-- **Criação de novos contatos** com validação de dados
+- **Criação de novos contatos**
 - **Edição de contatos existentes**
 - **Exclusão de contatos** com confirmação
 
@@ -27,7 +29,6 @@ O Contact Manager é uma aplicação web moderna que permite às empresas gerenc
 ### 📧 Funcionalidades de Email
 - **Confirmação de registro** por email
 - **Recuperação de senha** via email
-- **Notificações por email** quando contatos são deletados (funcionalidade extra)
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -82,35 +83,22 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-6. **Configure o email**
-Edite o arquivo `.env` com suas configurações de email:
-```env
-MAIL_MAILER=smtp
-MAIL_HOST=seu_host_smtp
-MAIL_PORT=587
-MAIL_USERNAME=seu_email
-MAIL_PASSWORD=sua_senha
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=seu_email@exemplo.com
-MAIL_FROM_NAME="Contact Manager"
-```
-
-7. **Execute as migrações**
+5. **Execute as migrações**
 ```bash
 php artisan migrate
 ```
 
-8. **Execute os seeders (opcional)**
+6. **Execute os seeders (opcional)**
 ```bash
 php artisan db:seed
 ```
 
-9. **Compile os assets**
+7. **Compile os assets**
 ```bash
 npm run dev
 ```
 
-10. **Inicie o servidor**
+8. **Inicie o servidor**
 ```bash
 php artisan serve
 ```
@@ -175,7 +163,7 @@ app/
 ![Página de Perfil](public/pages/profile.png)
 ![Continuação - Página de Perfil](public/pages/profile2.png)
 
-## 👨‍💻 Desenvolvedor
+## 👨‍💻 Desenvolvedora
 
 **Ana Iara Loayza Costa**
 - GitHub: [@iaraloayza](https://github.com/iaraloayza)
