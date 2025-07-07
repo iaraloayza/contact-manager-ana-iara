@@ -48,7 +48,6 @@ O Contact Manager é uma aplicação web moderna que permite às empresas gerenc
 ### Princípios e Padrões
 - **SOLID** - Princípios de design de software
 - **Clean Architecture** - Arquitetura limpa e organizadas
-- **Repository Pattern** - Padrão de repositório
 - **Service Layer** - Camada de serviços
 
 ## 📦 Instalação
@@ -184,16 +183,16 @@ app/
 
 ## 📸 Algumas Páginas
 
-![Tela de Login](pages/login.png)
-![Tela de Cadastro](pages/cadastro.png)
-![Verificação de cadastro](pages/verificacao_email.png)
-![Tela Inicial de Contatos](pages/index_contatos.png)
-![Modal de Criação de Contato](pages/create_contato.png)
-![Index Contatos](pages/index_contatos2.png)
-![Index Notificações](pages/index_notificacoes.png)
-![Dropdown Menu](pages/dropdown_menu.png)
-![Página de Perfil](pages/profile.png)
-![Continuação - Página de Perfil](pages/profile2.png)
+![Tela de Login](public/pages/login.png)
+![Tela de Cadastro](public/pages/cadastro.png)
+![Verificação de cadastro](public/pages/verificacao_email.png)
+![Tela Inicial de Contatos](public/pages/index_contatos.png)
+![Modal de Criação de Contato](public/pages/create_contato.png)
+![Index Contatos](public/pages/index_contatos2.png)
+![Index Notificações](public/pages/index_notificacoes.png)
+![Dropdown Menu](public/pages/dropdown_menu.png)
+![Página de Perfil](public/pages/profile.png)
+![Continuação - Página de Perfil](public/pages/profile2.png)
 
 ## 👨‍💻 Desenvolvedor
 
