@@ -289,4 +289,62 @@ class UserController extends Controller
             throw $e;
         }
     }
+
+    public function showProfile()
+    {
+        return Inertia::render('Auth/Profile', [
+            'user' => Auth::user()
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        try {
+            $user->update($validated);
+            
+            return redirect()->back()
+                ->with('success', 'Perfil atualizado com sucesso!');
+                
+        } catch (\Exception $e) {
+            \Log::error('Erro ao atualizar perfil: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Erro ao atualizar perfil. Tente novamente.');
+        }
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($validated['current_password'], $user->password)) {
+            return redirect()->back()
+                ->withErrors(['current_password' => 'A senha atual está incorreta.']);
+        }
+
+        try {
+            $user->update([
+                'password' => Hash::make($validated['password'])
+            ]);
+            
+            return redirect()->back()
+                ->with('success', 'Senha atualizada com sucesso!');
+                
+        } catch (\Exception $e) {
+            \Log::error('Erro ao atualizar senha: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Erro ao atualizar senha. Tente novamente.');
+        }
+    }
 }
