@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\ContactCreated;
+use App\Events\ContactUpdated;
 use App\Events\ContactDeleted;
 use App\Listeners\SendContactNotifications;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -28,8 +29,7 @@ class EventServiceProvider extends ServiceProvider
      * The subscriber classes to register.
      */
     protected $subscribe = [
-        // Remover daqui pois estamos usando $listen acima
-        // SendContactNotifications::class,
+        // Vazio - usando $listen acima
     ];
 
     /**
