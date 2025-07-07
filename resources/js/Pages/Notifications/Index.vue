@@ -219,6 +219,16 @@
                   </svg>
                   <span>Marcar como lida</span>
                 </button>
+                <button
+                  v-else
+                  @click="markAsUnread(notification.id)"
+                  class="bg-orange-50 hover:bg-orange-100 text-orange-600 px-4 py-2 rounded-lg transition-all duration-200 border border-orange-200 flex items-center space-x-2 text-sm font-medium"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                  </svg>
+                  <span>Marcar como não lida</span>
+                </button>
                 <div class="w-3 h-3 rounded-full" :class="notification.read_at ? 'bg-slate-300' : 'bg-blue-500'"></div>
               </div>
             </div>
@@ -268,6 +278,15 @@ const formatDate = (date) => {
 
 const markAsRead = (notificationId) => {
   router.patch(`/notifications/${notificationId}/mark-as-read`, {}, {
+    preserveScroll: true,
+    onSuccess: () => {
+      router.reload({ only: ['notifications', 'unreadCount'] })
+    }
+  })
+}
+
+const markAsUnread = (notificationId) => {
+  router.patch(`/notifications/${notificationId}/mark-as-unread`, {}, {
     preserveScroll: true,
     onSuccess: () => {
       router.reload({ only: ['notifications', 'unreadCount'] })

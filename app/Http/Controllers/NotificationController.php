@@ -40,4 +40,12 @@ class NotificationController extends Controller
         
         return back();
     }
+
+    public function markAsUnread($notificationId)
+    {
+        $notification = auth()->user()->notifications()->findOrFail($notificationId);
+        $notification->update(['read_at' => null]);
+        
+        return back();
+    }
 }
