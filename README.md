@@ -10,7 +10,6 @@ O Contact Manager é uma aplicação web moderna que permite às empresas gerenc
 
 ### 🔐 Autenticação
 - **Cadastro de usuários** com confirmação via email
-- **Login seguro** com validação
 - **Recuperação de senha** via email
 - **Logout** com limpeza de sessão
 
@@ -33,11 +32,11 @@ O Contact Manager é uma aplicação web moderna que permite às empresas gerenc
 ## 🛠️ Tecnologias Utilizadas
 
 ### Back-end
-- **Laravel 10** - Framework PHP robusto
+- **Laravel 11** - Framework PHP robusto
 - **SQLite** - Banco de dados relacional (escolhido pela simplicidade e portabilidade)
 - **Laravel Sanctum** - Autenticação de API
 - **Laravel Mail** - Sistema de envio de emails
-- **PHPUnit** - Testes unitários e de integração
+- **PHPUnit** - Testes de integração (Feature Tests)
 
 ### Front-end
 - **Vue.js 3** - Framework JavaScript reativo
@@ -53,9 +52,9 @@ O Contact Manager é uma aplicação web moderna que permite às empresas gerenc
 ## 📦 Instalação
 
 ### Pré-requisitos
-- PHP 8.1 ou superior
+- PHP 8.2 ou superior
 - Composer
-- Node.js 16 ou superior
+- Node.js 18 ou superior
 - Git
 - SQLite (já incluído no PHP)
 
@@ -81,18 +80,6 @@ npm install
 ```bash
 cp .env.example .env
 php artisan key:generate
-```
-
-5. **Configure o banco de dados**
-Edite o arquivo `.env` com as configurações do SQLite:
-```env
-DB_CONNECTION=sqlite
-DB_DATABASE=database/database.sqlite
-```
-
-6. **Crie o arquivo do banco de dados**
-```bash
-touch database/database.sqlite
 ```
 
 6. **Configure o email**
@@ -135,12 +122,7 @@ A aplicação estará disponível em `http://localhost:8000`
 Para executar os testes, utilize o comando:
 
 ```bash
-php artisan test
-```
-
-Para executar testes com coverage:
-```bash
-php artisan test --coverage
+php artisan test --testsuite=Feature
 ```
 
 ## 📱 Como Usar
@@ -149,8 +131,7 @@ php artisan test --coverage
 1. Acesse `http://localhost:8000`
 2. Clique em "Criar Conta"
 3. Preencha os dados do formulário
-4. Verifique seu email e clique no link de confirmação
-5. Faça login com suas credenciais
+4. Verifique seu email e copie o código para a tela de verificação de email
 
 ### 2. Gerenciando Contatos
 1. Após o login, você será direcionado para a página de contatos
@@ -181,7 +162,7 @@ app/
 └── Events/              # Eventos do sistema
 ```
 
-## 📸 Algumas Páginas
+## 📸 Páginas da Aplicação
 
 ![Tela de Login](public/pages/login.png)
 ![Tela de Cadastro](public/pages/cadastro.png)
@@ -196,10 +177,10 @@ app/
 
 ## 👨‍💻 Desenvolvedor
 
-**Ana Iara Loayza**
+**Ana Iara Loayza Costa**
 - GitHub: [@iaraloayza](https://github.com/iaraloayza)
 - LinkedIn: [Ana Iara Loayza](https://www.linkedin.com/in/ana-iara-loayza-costa-8b0886278/)
 
 ---
 
-⭐ Se este projeto te ajudou, não esqueça de dar uma estrela no repositório!
+⭐ Espero que tenham gostado!
