@@ -49,6 +49,7 @@ class SendContactNotifications implements ShouldQueue
                     'contact_id' => $event->contact->id,
                     'contact_name' => $event->contact->name,
                     'contact_email' => $event->contact->email,
+                    'action_by' => $user->name,
                     'action_url' => route('contacts.index')
                 ]
             );
@@ -84,11 +85,12 @@ class SendContactNotifications implements ShouldQueue
                 user: $user,
                 type: 'contact_updated',
                 title: '✏️ Contato atualizado',
-                message: "O contato '{$event->contact->name}' foi atualizado com sucesso.",
+                message: "O contato '{$event->contact->name}' foi atualizado com sucesso!",
                 data: [
                     'contact_id' => $event->contact->id,
                     'contact_name' => $event->contact->name,
                     'updated_at' => now()->toISOString(),
+                    'action_by' => $user->name,
                     'action_url' => route('contacts.index')
                 ]
             );
@@ -124,11 +126,12 @@ class SendContactNotifications implements ShouldQueue
                 user: $event->user,
                 type: 'contact_deleted',
                 title: '🗑️ Contato removido',
-                message: "O contato '{$event->contactName}' foi removido do sistema.",
+                message: "O contato '{$event->contactName}' foi removido com sucesso!",
                 data: [
                     'contact_name' => $event->contactName,
                     'contact_data' => $event->contactData,
-                    'deleted_at' => now()->toISOString()
+                    'deleted_at' => now()->toISOString(),
+                    'action_by' => $event->user->name
                 ]
             );
 

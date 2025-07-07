@@ -195,6 +195,9 @@
                     </span>
                   </div>
                   <p class="text-slate-600 mt-1 text-base">{{ notification.data.message }}</p>
+                  <p class="text-slate-500 text-sm mt-1">
+                    <span class="font-medium">Responsável:</span> {{ notification.data.action_by }}
+                  </p>
                   <div class="flex items-center space-x-4 mt-3">
                     <span class="text-sm text-slate-500">{{ formatDate(notification.created_at) }}</span>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
