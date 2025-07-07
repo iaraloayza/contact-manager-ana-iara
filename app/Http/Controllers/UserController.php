@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\TwoFactorRequest;
 use App\Models\User;
+use App\Models\Contact;
 use App\Models\TwoFactorCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -361,6 +362,10 @@ class UserController extends Controller
         }
 
         Auth::logout();
+
+        // Remover relações antes da exclusão
+        Contact::where('created_by', $user->id)->update(['created_by' => null]);
+        Contact::where('updated_by', $user->id)->update(['updated_by' => null]);
 
         $user->delete();
 
